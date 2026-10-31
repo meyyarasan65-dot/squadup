@@ -86,6 +86,22 @@
     @apply bg-gradient-to-b from-white to-zinc-400 bg-clip-text text-transparent;
   }
 
+  /* Multi-point colour wash behind the signed-in app (see AppBackground). */
+  .app-wash {
+    background-image:
+      radial-gradient(60% 50% at 12% 0%, rgb(99 102 241 / 0.2), transparent 70%),
+      radial-gradient(45% 40% at 92% 8%, rgb(34 211 238 / 0.13), transparent 70%),
+      radial-gradient(55% 45% at 70% 100%, rgb(139 92 246 / 0.16), transparent 70%),
+      radial-gradient(40% 35% at 0% 85%, rgb(56 189 248 / 0.1), transparent 70%);
+  }
+  html.light .app-wash {
+    background-image:
+      radial-gradient(60% 50% at 12% 0%, rgb(99 102 241 / 0.12), transparent 70%),
+      radial-gradient(45% 40% at 92% 8%, rgb(34 211 238 / 0.1), transparent 70%),
+      radial-gradient(55% 45% at 70% 100%, rgb(139 92 246 / 0.1), transparent 70%),
+      radial-gradient(40% 35% at 0% 85%, rgb(56 189 248 / 0.08), transparent 70%);
+  }
+
   .text-gradient-brand {
     @apply bg-gradient-to-r from-indigo-400 via-violet-400 to-cyan-300 bg-clip-text text-transparent;
   }

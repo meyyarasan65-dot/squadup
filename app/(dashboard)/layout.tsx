@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { Navbar } from "@/components/Navbar";
+import { AppBackground } from "@/components/shared/AppBackground";
 import { NotificationListener } from "@/components/real-time/NotificationListener";
 import { countIncomingInvites } from "@/lib/queries";
 import { getSessionProfile } from "@/lib/supabase/server";
@@ -13,7 +14,8 @@ export default async function DashboardLayout({ children }: { children: React.Re
   const pendingInvites = await countIncomingInvites(profile.id);
 
   return (
-    <div className="flex min-h-dvh flex-col">
+    <div className="relative isolate flex min-h-dvh flex-col">
+      <AppBackground />
       <Navbar
         user={{
           name: profile.full_name,

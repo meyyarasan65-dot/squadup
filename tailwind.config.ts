@@ -140,8 +140,14 @@ const config: Config = {
           "0%, 100%": { transform: "translateY(0)" },
           "50%": { transform: "translateY(-6px)" },
         },
+        drift: {
+          "0%, 100%": { transform: "translate3d(0, 0, 0) scale(1)" },
+          "33%": { transform: "translate3d(40px, -30px, 0) scale(1.08)" },
+          "66%": { transform: "translate3d(-30px, 25px, 0) scale(0.95)" },
+        },
       },
       animation: {
+        drift: "drift 22s ease-in-out infinite",
         "fade-up": "fade-up 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) both",
         float: "float 5s ease-in-out infinite",
         "pulse-ring": "pulse-ring 1.6s cubic-bezier(0.2, 0.6, 0.4, 1) infinite",
