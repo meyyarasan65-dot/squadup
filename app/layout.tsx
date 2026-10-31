@@ -1,12 +1,13 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
-import { Toaster } from "sonner";
+import { ThemedToaster } from "@/components/shared/ThemedToaster";
 import "./globals.css";
 
 const sans = Inter({ subsets: ["latin"], variable: "--font-sans", display: "swap" });
 const mono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-mono", display: "swap" });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"),
   title: {
     default: "SquadUp — Hackathon Teammate Matchmaker",
     template: "%s · SquadUp",
@@ -26,25 +27,25 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#09090b",
-  colorScheme: "dark",
+  themeColor: [
+    { media: "(prefers-color-scheme: dark)", color: "#09090b" },
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+  ],
+  colorScheme: "dark light",
 };
+
+/** Runs before first paint so a saved light preference doesn't flash dark. */
+const THEME_INIT = `try{if(localStorage.getItem("squadup:theme")==="light"){var c=document.documentElement.classList;c.add("light");c.remove("dark")}}catch(e){}`;
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`dark ${sans.variable} ${mono.variable}`}>
+    <html lang="en" className={`dark ${sans.variable} ${mono.variable}`} suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: THEME_INIT }} />
+      </head>
       <body className="min-h-dvh font-sans">
         {children}
-        <Toaster
-          theme="dark"
-          position="bottom-right"
-          toastOptions={{
-            classNames: {
-              toast: "!bg-zinc-900 !border-zinc-800 !text-zinc-100",
-              description: "!text-zinc-400",
-            },
-          }}
-        />
+        <ThemedToaster />
       </body>
     </html>
   );

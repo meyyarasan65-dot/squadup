@@ -3,9 +3,8 @@
 import { motion } from "framer-motion";
 import { ArrowUpRight, Check, Clock, UserPlus } from "lucide-react";
 import Link from "next/link";
-import { MatchScoreRing, PulseDot, RoleBadge } from "@/components/shared/badges";
+import { MatchScoreRing, MatchTag, PulseDot, RoleBadge } from "@/components/shared/badges";
 import { UserAvatar } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { languageColor } from "@/lib/constants";
 import { openRoles, openSlots } from "@/lib/mappers";
@@ -41,7 +40,7 @@ export function TeamCard({
       exit={{ opacity: 0, scale: 0.98 }}
       whileHover={{ y: -3 }}
       transition={{ type: "spring", stiffness: 400, damping: 32 }}
-      className="group flex flex-col gap-4 rounded-xl border border-zinc-800 bg-zinc-900/50 p-5 transition-colors hover:border-zinc-700 hover:bg-zinc-900/80"
+      className="group relative flex flex-col gap-4 rounded-2xl border border-white/[0.08] bg-zinc-900/60 p-5 backdrop-blur-md transition-all duration-300 focus-within:z-20 hover:z-20 hover:border-sky-500/30 hover:shadow-[0_0_30px_-5px_rgba(56,189,248,0.15)]"
     >
       <header className="flex items-start gap-3">
         <div className="flex min-w-0 flex-1 flex-col gap-1">
@@ -50,12 +49,20 @@ export function TeamCard({
             className="flex items-center gap-1 truncate font-medium text-white hover:underline"
           >
             {team.team_name}
-            <ArrowUpRight className="h-3.5 w-3.5 text-zinc-500 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+            <ArrowUpRight className="h-3.5 w-3.5 text-zinc-400 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
           </Link>
-          <p className="truncate text-xs text-zinc-500">{team.event.title}</p>
+          <p className="truncate text-xs text-zinc-400">{team.event.title}</p>
         </div>
-        <MatchScoreRing score={match.score} />
+        <MatchScoreRing score={match.score} breakdown={match.breakdown} />
       </header>
+
+      {match.reasons.length > 0 && (
+        <div className="flex flex-wrap gap-1.5">
+          {match.reasons.map((r) => (
+            <MatchTag key={r} reason={r} />
+          ))}
+        </div>
+      )}
 
       {team.pitch && <p className="line-clamp-2 text-sm text-zinc-400">{team.pitch}</p>}
 
@@ -101,21 +108,11 @@ export function TeamCard({
             />
           ))}
         </div>
-        <span className="flex items-center gap-1 text-xs text-zinc-500" suppressHydrationWarning>
+        <span className="flex items-center gap-1 text-xs text-zinc-400" suppressHydrationWarning>
           <Clock className="h-3 w-3" aria-hidden />
           closes {formatRelative(team.event.registration_deadline)}
         </span>
       </div>
-
-      {match.reasons.length > 0 && (
-        <div className="flex flex-wrap gap-1.5">
-          {match.reasons.map((r) => (
-            <Badge key={r} variant={r === "Exact Role Match" ? "success" : "default"}>
-              {r}
-            </Badge>
-          ))}
-        </div>
-      )}
 
       <footer className="mt-auto pt-1">
         {invitedByTeam ? (
@@ -123,10 +120,16 @@ export function TeamCard({
             <Link href="/invites">You&apos;re invited · respond</Link>
           </Button>
         ) : requested ? (
-          <Button variant="secondary" className="w-full" disabled>
-            <Check />
-            Request sent
-          </Button>
+          <motion.div
+            initial={{ scale: 0.92, opacity: 0.6 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ type: "spring", stiffness: 500, damping: 22 }}
+          >
+            <Button variant="secondary" className="w-full text-emerald-300" disabled>
+              <Check />
+              Request sent
+            </Button>
+          </motion.div>
         ) : (
           <Button className="w-full" onClick={onRequest} disabled={disabled}>
             <UserPlus />

@@ -23,7 +23,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
         pendingInvites={pendingInvites}
       />
       <NotificationListener userId={profile.id} />
-      <main className="container flex-1 py-6 sm:py-10">{children}</main>
+      <main className="container flex-1 py-6 pb-24 sm:py-10 md:pb-10">{children}</main>
     </div>
   );
 }

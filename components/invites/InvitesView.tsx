@@ -77,7 +77,7 @@ export function InvitesView({ userId, incoming, outgoing, history }: InvitesView
           <Inbox className="h-4 w-4" />
           <span>Incoming</span>
           {incoming.length > 0 && (
-            <span className="ml-1 rounded-full bg-indigo-500 px-1.5 py-0.2 font-mono text-[10px] font-bold text-white">
+            <span className="ml-1 rounded-full bg-indigo-500 px-1.5 py-0.2 font-mono text-[10px] font-bold text-primary-foreground">
               {incoming.length}
             </span>
           )}

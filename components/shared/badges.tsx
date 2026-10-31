@@ -1,6 +1,8 @@
+import { useId } from "react";
 import { ROLE_LABELS, ROLE_STYLES } from "@/lib/constants";
+import { MATCH_WEIGHTS } from "@/lib/match-algorithm";
 import { cn } from "@/lib/utils";
-import type { Role } from "@/types";
+import type { MatchResult, Role } from "@/types";
 
 export function RoleBadge({ role, className }: { role: Role; className?: string }) {
   return (
@@ -16,6 +18,27 @@ export function RoleBadge({ role, className }: { role: Role; className?: string 
   );
 }
 
+/**
+ * Ghost pill for a match reason. Strong signals (exact role, high language overlap) are emerald;
+ * the rest are quieter sky, so neither competes with the primary role badge.
+ */
+export function MatchTag({ reason, className }: { reason: string; className?: string }) {
+  const strong = reason === "Exact Role Match" || reason.startsWith("High ");
+  return (
+    <span
+      className={cn(
+        "inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs",
+        strong
+          ? "border-emerald-500/20 bg-emerald-500/[0.08] text-emerald-400"
+          : "border-sky-500/20 bg-sky-500/[0.08] text-sky-400",
+        className,
+      )}
+    >
+      {reason}
+    </span>
+  );
+}
+
 /** Live "openings" indicator: a pulsing dot. */
 export function PulseDot({ className, tone = "emerald" }: { className?: string; tone?: "emerald" | "indigo" }) {
   const color = tone === "emerald" ? "bg-emerald-400" : "bg-indigo-400";
@@ -27,38 +50,109 @@ export function PulseDot({ className, tone = "emerald" }: { className?: string; 
   );
 }
 
-/** Small radial gauge for a 0–100 match score. */
-export function MatchScoreRing({ score, size = 44 }: { score: number; size?: number }) {
-  const r = 16;
-  const c = 2 * Math.PI * r;
-  const tone = score >= 70 ? "text-emerald-400" : score >= 40 ? "text-indigo-400" : "text-zinc-500";
+/** Border, fill, glow and text colour for the score badge: emerald 80+, amber 50–79, muted below. */
+export function scoreTier(score: number): string {
+  if (score >= 80) {
+    return "border-emerald-500/40 text-emerald-400 bg-emerald-500/10 shadow-[0_0_14px_rgba(16,185,129,0.2)]";
+  }
+  if (score >= 50) return "border-amber-500/40 text-amber-400 bg-amber-500/10";
+  return "border-zinc-700 text-zinc-400 bg-zinc-800/40";
+}
+
+const BREAKDOWN_ROWS = [
+  { key: "role", label: "Role fit", max: Math.round(MATCH_WEIGHTS.role * 100) },
+  { key: "language", label: "GitHub language overlap", max: Math.round(MATCH_WEIGHTS.language * 100) },
+  { key: "event", label: "Event registration", max: Math.round(MATCH_WEIGHTS.event * 100) },
+] as const;
+
+function ScoreBreakdown({ id, score, breakdown }: { id: string; score: number; breakdown: MatchResult["breakdown"] }) {
   return (
     <div
-      className={cn("relative inline-flex shrink-0 items-center justify-center", tone)}
-      style={{ width: size, height: size }}
-      role="img"
-      aria-label={`Match score ${score} out of 100`}
+      id={id}
+      role="tooltip"
+      className={cn(
+        "pointer-events-none invisible absolute right-0 top-full z-30 mt-2 w-60 rounded-xl border border-white/[0.1] bg-zinc-900 p-3 text-left opacity-0 shadow-xl transition duration-150",
+        "group-hover/score:visible group-hover/score:opacity-100 group-focus-within/score:visible group-focus-within/score:opacity-100",
+      )}
     >
-      <svg
-        width={size}
-        height={size}
-        viewBox="0 0 40 40"
-        className="absolute inset-0 -rotate-90"
+      <p className="mb-2 flex items-center justify-between text-[11px] font-medium uppercase tracking-wider text-zinc-400">
+        Match breakdown
+        <span className="font-mono normal-case text-zinc-200">{score}/100</span>
+      </p>
+      <ul className="flex flex-col gap-2">
+        {BREAKDOWN_ROWS.map(({ key, label, max }) => {
+          const value = breakdown[key];
+          return (
+            <li key={key} className="flex flex-col gap-1">
+              <div className="flex items-center justify-between text-xs">
+                <span className="text-zinc-300">{label}</span>
+                <span className="font-mono tabular-nums text-zinc-400">
+                  {value}
+                  <span className="text-zinc-500"> / {max}</span>
+                </span>
+              </div>
+              <div className="h-1 overflow-hidden rounded-full bg-white/[0.06]">
+                <div
+                  className="h-full rounded-full bg-gradient-to-r from-sky-400 to-emerald-400"
+                  style={{ width: `${Math.min(100, (value / max) * 100)}%` }}
+                />
+              </div>
+            </li>
+          );
+        })}
+      </ul>
+    </div>
+  );
+}
+
+/**
+ * Circular 0–100 match score. With `breakdown`, hovering or focusing it reveals how the
+ * score splits across role fit, language overlap and event registration.
+ */
+export function MatchScoreRing({
+  score,
+  size = 44,
+  breakdown,
+}: {
+  score: number;
+  size?: number;
+  breakdown?: MatchResult["breakdown"];
+}) {
+  const r = 16;
+  const c = 2 * Math.PI * r;
+  const tooltipId = useId();
+
+  return (
+    <div className="group/score relative inline-flex shrink-0">
+      <div
+        className={cn(
+          "relative inline-flex items-center justify-center rounded-full border",
+          scoreTier(score),
+          breakdown && "cursor-help",
+        )}
+        style={{ width: size, height: size }}
+        role="img"
+        aria-label={`Match score ${score} out of 100`}
+        aria-describedby={breakdown ? tooltipId : undefined}
+        tabIndex={breakdown ? 0 : undefined}
       >
-        <circle cx="20" cy="20" r={r} fill="none" stroke="currentColor" strokeOpacity={0.15} strokeWidth={3.5} />
-        <circle
-          cx="20"
-          cy="20"
-          r={r}
-          fill="none"
-          stroke="currentColor"
-          strokeWidth={3.5}
-          strokeLinecap="round"
-          strokeDasharray={c}
-          strokeDashoffset={c * (1 - score / 100)}
-        />
-      </svg>
-      <span className="font-mono text-xs font-semibold tabular-nums text-white">{score}</span>
+        <svg width={size} height={size} viewBox="0 0 40 40" className="absolute inset-0 -rotate-90">
+          <circle cx="20" cy="20" r={r} fill="none" stroke="currentColor" strokeOpacity={0.15} strokeWidth={3} />
+          <circle
+            cx="20"
+            cy="20"
+            r={r}
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={3}
+            strokeLinecap="round"
+            strokeDasharray={c}
+            strokeDashoffset={c * (1 - score / 100)}
+          />
+        </svg>
+        <span className="relative font-mono text-xs font-semibold tabular-nums">{score}</span>
+      </div>
+      {breakdown && <ScoreBreakdown id={tooltipId} score={score} breakdown={breakdown} />}
     </div>
   );
 }

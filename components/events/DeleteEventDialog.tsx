@@ -21,11 +21,23 @@ interface DeleteEventDialogProps {
   event: HackathonEvent;
   teamsCount?: number;
   size?: "sm" | "default";
+  /** Controlled mode, with no built-in trigger, for opening from a menu item. */
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }
 
-export function DeleteEventDialog({ event, teamsCount = 0, size = "sm" }: DeleteEventDialogProps) {
+export function DeleteEventDialog({
+  event,
+  teamsCount = 0,
+  size = "sm",
+  open: controlledOpen,
+  onOpenChange,
+}: DeleteEventDialogProps) {
   const router = useRouter();
-  const [open, setOpen] = useState(false);
+  const [internalOpen, setInternalOpen] = useState(false);
+  const isControlled = controlledOpen !== undefined;
+  const open = isControlled ? controlledOpen : internalOpen;
+  const setOpen = isControlled ? (onOpenChange ?? (() => {})) : setInternalOpen;
   const [isPending, startTransition] = useTransition();
 
   const onDelete = () => {
@@ -45,17 +57,19 @@ export function DeleteEventDialog({ event, teamsCount = 0, size = "sm" }: Delete
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button
-          variant="outline"
-          size={size}
-          className="gap-1.5 text-red-400 hover:border-red-500/40 hover:bg-red-500/10 hover:text-red-300"
-          title="Delete Hackathon (Admin Only)"
-        >
-          <Trash2 className="h-3.5 w-3.5" />
-          <span>Delete</span>
-        </Button>
-      </DialogTrigger>
+      {!isControlled && (
+        <DialogTrigger asChild>
+          <Button
+            variant="outline"
+            size={size}
+            className="gap-1.5 text-red-400 hover:border-red-500/40 hover:bg-red-500/10 hover:text-red-300"
+            title="Delete Hackathon (Admin Only)"
+          >
+            <Trash2 className="h-3.5 w-3.5" />
+            <span>Delete</span>
+          </Button>
+        </DialogTrigger>
+      )}
       <DialogContent>
         <DialogHeader>
           <div className="flex items-center gap-2 text-red-400">
@@ -91,7 +105,7 @@ export function DeleteEventDialog({ event, teamsCount = 0, size = "sm" }: Delete
             variant="destructive"
             onClick={onDelete}
             disabled={isPending}
-            className="bg-red-600 hover:bg-red-500 text-white font-medium gap-1.5"
+            className="bg-red-600 hover:bg-red-500 text-primary-foreground font-medium gap-1.5"
           >
             {isPending ? (
               <>

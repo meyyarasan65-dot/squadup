@@ -103,7 +103,7 @@ export function CreateEventDialog() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="gap-1.5 shadow-sm bg-indigo-600 hover:bg-indigo-500 text-white font-medium">
+        <Button className="gap-1.5 shadow-sm bg-indigo-600 hover:bg-indigo-500 text-primary-foreground font-medium">
           <Plus className="h-4 w-4" />
           <span>Add Hackathon</span>
           <span className="ml-1 inline-flex items-center gap-0.5 rounded bg-indigo-700/60 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-indigo-200">
@@ -353,7 +353,7 @@ export function CreateEventDialog() {
             <Button
               type="submit"
               disabled={isPending}
-              className="bg-indigo-600 hover:bg-indigo-500 text-white font-medium"
+              className="bg-indigo-600 hover:bg-indigo-500 text-primary-foreground font-medium"
             >
               {isPending ? (
                 <>

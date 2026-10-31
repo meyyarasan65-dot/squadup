@@ -10,6 +10,8 @@ interface ChipToggleGroupProps<T extends string> {
   label?: (option: T) => string;
   max?: number;
   ariaLabel: string;
+  /** Overrides the default indigo selected-chip styling. */
+  activeClassName?: string;
 }
 
 /** Multi-select rendered as toggleable chips (roles, languages). */
@@ -20,6 +22,7 @@ export function ChipToggleGroup<T extends string>({
   label = (o) => o,
   max,
   ariaLabel,
+  activeClassName = "border-indigo-500/50 bg-indigo-500/15 text-indigo-200",
 }: ChipToggleGroupProps<T>) {
   const selected = new Set(value);
   const atMax = max !== undefined && value.length >= max;
@@ -38,7 +41,7 @@ export function ChipToggleGroup<T extends string>({
             className={cn(
               "inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-xs font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-40",
               on
-                ? "border-indigo-500/50 bg-indigo-500/15 text-indigo-200"
+                ? activeClassName
                 : "border-zinc-800 bg-zinc-900/60 text-zinc-400 hover:border-zinc-700 hover:text-zinc-200",
             )}
           >

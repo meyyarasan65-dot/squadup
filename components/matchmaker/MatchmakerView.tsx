@@ -14,7 +14,7 @@ import { EmptyState } from "@/components/shared/EmptyState";
 import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/form-controls";
 import { Sheet, SheetContent, SheetDescription, SheetTitle } from "@/components/ui/sheet";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { SegmentedTabsList, SegmentedTabsTrigger, Tabs, TabsContent } from "@/components/ui/tabs";
 import { SKILL_THRESHOLD_PERCENT } from "@/lib/constants";
 import { isTeamOpen, openRoles } from "@/lib/mappers";
 import {
@@ -143,16 +143,26 @@ export function MatchmakerView({
   return (
     <Tabs value={store.tab} onValueChange={(v) => store.setTab(v as MatchmakerTab)}>
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <TabsList className="w-full sm:w-auto">
-          <TabsTrigger value="teams" className="flex-1 sm:flex-none">
+        <SegmentedTabsList className="w-full sm:w-auto">
+          <SegmentedTabsTrigger
+            value="teams"
+            layoutId="matchmaker-tab"
+            active={store.tab === "teams"}
+            className="flex-1 sm:flex-none"
+          >
             <Users />
             Find a team
-          </TabsTrigger>
-          <TabsTrigger value="teammates" className="flex-1 sm:flex-none">
+          </SegmentedTabsTrigger>
+          <SegmentedTabsTrigger
+            value="teammates"
+            layoutId="matchmaker-tab"
+            active={store.tab === "teammates"}
+            className="flex-1 sm:flex-none"
+          >
             <UserSearch />
             Find teammates
-          </TabsTrigger>
-        </TabsList>
+          </SegmentedTabsTrigger>
+        </SegmentedTabsList>
         <Button
           variant="outline"
           className="lg:hidden"
@@ -162,7 +172,7 @@ export function MatchmakerView({
           <SlidersHorizontal />
           Filters
           {activeFilterCount > 0 && (
-            <span className="rounded-full bg-indigo-500 px-1.5 font-mono text-[11px] text-white">
+            <span className="rounded-full bg-indigo-500 px-1.5 font-mono text-[11px] text-primary-foreground">
               {activeFilterCount}
             </span>
           )}
@@ -171,7 +181,7 @@ export function MatchmakerView({
 
       <div className="mt-6 grid gap-8 lg:grid-cols-[260px_1fr]">
         <aside className="hidden lg:block">
-          <div className="sticky top-20 rounded-xl border border-zinc-800 bg-zinc-900/30 p-4">{filters}</div>
+          <div className="sticky top-24 rounded-2xl border border-white/[0.08] bg-zinc-900/50 p-4 backdrop-blur-md">{filters}</div>
         </aside>
 
         <div className="min-w-0">

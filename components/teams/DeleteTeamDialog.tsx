@@ -91,7 +91,7 @@ export function DeleteTeamDialog({ team, size = "sm" }: DeleteTeamDialogProps) {
             variant="destructive"
             onClick={onDelete}
             disabled={isPending}
-            className="bg-red-600 hover:bg-red-500 text-white font-medium gap-1.5"
+            className="bg-red-600 hover:bg-red-500 text-primary-foreground font-medium gap-1.5"
           >
             {isPending ? (
               <>

@@ -8,6 +8,7 @@ import { EditTeamDialog } from "@/components/teams/EditTeamDialog";
 import { DeleteTeamDialog } from "@/components/teams/DeleteTeamDialog";
 import { LeaveTeamButton } from "@/components/teams/LeaveTeamButton";
 import { RemoveMemberButton } from "@/components/teams/RemoveMemberButton";
+import { TeamCelebration } from "@/components/teams/TeamCelebration";
 import { TeamInviteManager } from "@/components/teams/TeamInviteManager";
 import { TeamMembershipAction } from "@/components/teams/TeamMembershipAction";
 import { UserAvatar } from "@/components/ui/avatar";
@@ -71,6 +72,8 @@ export default async function TeamPage({ params }: TeamPageProps) {
 
   return (
     <div className="mx-auto flex max-w-5xl flex-col gap-8 pb-12">
+      {isMember && slots === 0 && <TeamCelebration teamId={team.id} teamName={team.team_name} />}
+
       {/* Breadcrumb Navigation */}
       <div className="flex items-center gap-2 text-xs text-zinc-500">
         <Button asChild variant="ghost" size="sm" className="-ml-3 h-8 text-zinc-400 hover:text-white">
@@ -139,7 +142,7 @@ export default async function TeamPage({ params }: TeamPageProps) {
                       <p className="text-xs font-medium text-zinc-300">Your match</p>
                       <p className="text-[10px] text-zinc-500">fit score</p>
                     </div>
-                    <MatchScoreRing score={viewerMatch.score} size={44} />
+                    <MatchScoreRing score={viewerMatch.score} size={44} breakdown={viewerMatch.breakdown} />
                   </div>
                 )}
                 <TeamMembershipAction

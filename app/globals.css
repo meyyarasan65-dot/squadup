@@ -16,7 +16,7 @@
     --secondary: 240 4% 14%;
     --secondary-foreground: 0 0% 96%;
     --muted: 240 4% 14%;
-    --muted-foreground: 240 5% 62%;
+    --muted-foreground: 240 5% 68%;
     --accent: 240 4% 16%;
     --accent-foreground: 0 0% 96%;
     --destructive: 0 72% 51%;
@@ -26,6 +26,27 @@
     --ring: 239 84% 67%;
     --radius: 0.625rem;
     color-scheme: dark;
+  }
+
+  /* Light theme: toggled by the `light` class on <html> (see ThemeToggle). */
+  html.light {
+    --background: 0 0% 100%;
+    --foreground: 240 10% 4%;
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 4%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 4%;
+    --primary: 239 84% 60%;
+    --secondary: 240 5% 94%;
+    --secondary-foreground: 240 10% 10%;
+    --muted: 240 5% 94%;
+    --muted-foreground: 240 4% 38%;
+    --accent: 240 5% 92%;
+    --accent-foreground: 240 10% 10%;
+    --border: 240 6% 88%;
+    --input: 240 6% 86%;
+    --ring: 239 84% 60%;
+    color-scheme: light;
   }
 
   * {
@@ -42,7 +63,7 @@
   }
 
   ::selection {
-    @apply bg-indigo-500/30 text-white;
+    @apply bg-indigo-500/30 text-foreground;
   }
 
   :focus-visible {
@@ -52,8 +73,8 @@
 
 @layer utilities {
   .bg-grid {
-    background-image: linear-gradient(to right, rgb(255 255 255 / 0.04) 1px, transparent 1px),
-      linear-gradient(to bottom, rgb(255 255 255 / 0.04) 1px, transparent 1px);
+    background-image: linear-gradient(to right, rgb(var(--c-white) / 0.05) 1px, transparent 1px),
+      linear-gradient(to bottom, rgb(var(--c-white) / 0.05) 1px, transparent 1px);
     background-size: 44px 44px;
   }
 
@@ -63,6 +84,18 @@
 
   .text-gradient {
     @apply bg-gradient-to-b from-white to-zinc-400 bg-clip-text text-transparent;
+  }
+
+  .text-gradient-brand {
+    @apply bg-gradient-to-r from-indigo-400 via-violet-400 to-cyan-300 bg-clip-text text-transparent;
+  }
+
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .text-pretty {
+    text-wrap: pretty;
   }
 
   .scrollbar-none {

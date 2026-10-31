@@ -37,7 +37,7 @@ export function Logo({
           minHeight: iconDimensions,
         }}
         className={cn(
-          "relative shrink-0 overflow-hidden rounded-lg border border-sky-500/20 shadow-[0_0_16px_-2px_rgba(56,189,248,0.4)] transition-transform duration-200 group-hover:scale-105",
+          "relative shrink-0 overflow-hidden rounded-xl border border-white/10 shadow-[0_0_20px_-3px_rgba(56,189,248,0.3)] transition-transform duration-200 group-hover:scale-105",
           iconContainerClass,
         )}
       >
@@ -52,9 +52,13 @@ export function Logo({
       </div>
 
       {showText && (
-        <span className={cn("font-bold tracking-tight", textSizeClass)}>
-          <span className="text-white">Squad</span>
-          <span className="text-sky-400">Up</span>
+        <span
+          className={cn(
+            "bg-gradient-to-r from-white via-zinc-200 to-zinc-400 bg-clip-text font-bold tracking-tight text-transparent",
+            textSizeClass,
+          )}
+        >
+          SquadUp
         </span>
       )}
     </Link>
