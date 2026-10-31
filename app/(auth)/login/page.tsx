@@ -65,7 +65,7 @@ export default async function LoginPage({
       <div className="pointer-events-none absolute left-1/2 top-1/3 h-[420px] w-[620px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-indigo-600/20 blur-[120px]" />
 
       <div className="relative flex w-full max-w-md flex-col gap-8">
-        <Logo className="self-center text-lg" />
+        <Logo className="self-center" size="lg" />
 
         <div className="glass flex flex-col gap-6 rounded-2xl p-6 sm:p-8">
           <div className="flex flex-col gap-2 text-center">

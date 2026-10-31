@@ -8,11 +8,21 @@ const mono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-mono", displ
 
 export const metadata: Metadata = {
   title: {
-    default: "Squadup — Hackathon Teammate Matchmaker",
-    template: "%s · Squadup",
+    default: "SquadUp — Hackathon Teammate Matchmaker",
+    template: "%s · SquadUp",
   },
   description:
     "Find hackathon teammates by verified GitHub skills. Role-balanced matchmaking, 24-hour invites, real-time notifications.",
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/icon-192.png", sizes: "192x192", type: "image/png" },
+      { url: "/icon-512.png", sizes: "512x512", type: "image/png" },
+    ],
+    apple: [
+      { url: "/apple-icon.png", sizes: "180x180", type: "image/png" },
+    ],
+  },
 };
 
 export const viewport: Viewport = {
