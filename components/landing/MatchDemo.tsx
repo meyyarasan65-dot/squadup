@@ -101,7 +101,7 @@ export function MatchDemo() {
     list.includes(item) ? list.filter((x) => x !== item) : [...list, item];
 
   return (
-    <div className="glass relative overflow-hidden rounded-2xl p-4 sm:p-6">
+    <div className="glass relative w-full min-w-0 overflow-hidden rounded-2xl p-3 sm:p-6">
       <div className="pointer-events-none absolute -right-24 -top-24 h-64 w-64 rounded-full bg-indigo-500/20 blur-3xl" />
       <div className="relative flex flex-col gap-4">
         <div className="flex flex-col gap-3">
@@ -157,7 +157,7 @@ export function MatchDemo() {
                     i === 0 && match.score > 0 ? "border-emerald-500/30" : "border-zinc-800",
                   )}
                 >
-                  <UserAvatar name={candidate.full_name} src={null} className="h-9 w-9" />
+                  <UserAvatar name={candidate.full_name} src={null} className="h-9 w-9 shrink-0" />
                   <div className="flex min-w-0 flex-1 flex-col gap-1.5">
                     <div className="flex flex-wrap items-center gap-2">
                       <span className="truncate text-sm font-medium text-white">{candidate.full_name}</span>

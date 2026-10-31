@@ -125,7 +125,7 @@ export default async function LandingPage() {
                 <p className="mt-1 text-xs text-zinc-300">
                   Only shown in development. To activate GitHub OAuth, matchmaking and invites:
                 </p>
-                <div className="mt-3 grid gap-2 text-xs sm:grid-cols-3">
+                <div className="mt-3 grid grid-cols-1 gap-2 text-xs sm:grid-cols-3">
                   <div className="rounded-lg border border-amber-500/20 bg-zinc-950/60 p-2.5">
                     <span className="font-semibold text-amber-300">1. Supabase API</span>
                     <p className="mt-0.5 text-zinc-400">Copy URL & keys from Dashboard → Project Settings → API.</p>
@@ -145,8 +145,8 @@ export default async function LandingPage() {
         )}
 
         {/* Hero */}
-        <section className="grid items-center gap-12 py-14 lg:grid-cols-[1.05fr_1fr] lg:py-24">
-          <div className="flex flex-col gap-6">
+        <section className="grid grid-cols-1 items-center gap-10 py-10 sm:gap-12 sm:py-14 lg:grid-cols-[1.05fr_1fr] lg:py-24">
+          <div className="flex min-w-0 flex-col gap-6">
             <span className="animate-fade-up inline-flex w-fit items-center gap-2 rounded-full border border-zinc-800 bg-zinc-900/60 px-3 py-1 text-xs text-zinc-300">
               <PulseDot />
               Teams are recruiting right now
@@ -178,12 +178,12 @@ export default async function LandingPage() {
                 <Link href="/events">Browse hackathons</Link>
               </Button>
             </div>
-            <p className="font-mono text-xs text-zinc-400">
+            <p className="break-words font-mono text-[11px] text-zinc-400 sm:text-xs">
               score = 0.45·role + 0.35·languages + 0.20·registered
             </p>
           </div>
 
-          <div className="animate-fade-up relative" style={{ animationDelay: "200ms" }}>
+          <div className="animate-fade-up relative min-w-0" style={{ animationDelay: "200ms" }}>
             <div className="pointer-events-none absolute -inset-6 -z-10 rounded-[2rem] bg-gradient-to-tr from-indigo-600/25 via-violet-500/10 to-cyan-400/20 blur-3xl" />
             <MatchDemo />
             <div className="animate-float glass absolute -bottom-4 -left-3 hidden items-center gap-2 rounded-full px-3 py-1.5 text-xs text-zinc-200 shadow-xl sm:flex">
@@ -195,7 +195,7 @@ export default async function LandingPage() {
 
         {/* Stats */}
         {stats && (
-          <section aria-label="Platform stats" className="pb-16">
+          <section aria-label="Platform stats" className="pb-12 sm:pb-16">
             <dl className="mx-auto grid max-w-2xl grid-cols-3 gap-3 text-center">
               {[
                 { label: "Builders", value: stats.builders },
@@ -214,14 +214,14 @@ export default async function LandingPage() {
         )}
 
         {/* How it works */}
-        <section className="pb-20" aria-labelledby="how-it-works">
+        <section className="pb-14 sm:pb-20" aria-labelledby="how-it-works">
           <div className="mb-8 flex flex-col items-center gap-2 text-center">
             <p className="text-xs font-medium uppercase tracking-wider text-indigo-300">How it works</p>
             <h2 id="how-it-works" className="text-balance text-2xl font-semibold tracking-tight text-white sm:text-3xl">
               From sign-in to squad in three steps
             </h2>
           </div>
-          <ol className="grid gap-4 md:grid-cols-3">
+          <ol className="grid grid-cols-1 gap-4 md:grid-cols-3">
             {STEPS.map(({ icon: Icon, title, body }, i) => (
               <li
                 key={title}
@@ -233,7 +233,7 @@ export default async function LandingPage() {
                 <span className="mb-3 flex h-9 w-9 items-center justify-center rounded-lg bg-indigo-500/15 text-indigo-300">
                   <Icon className="h-4 w-4" aria-hidden />
                 </span>
-                <h3 className="mb-1 font-medium text-white">{title}</h3>
+                <h3 className="mb-1 pr-8 font-medium text-white">{title}</h3>
                 <p className="text-sm text-zinc-400">{body}</p>
               </li>
             ))}
@@ -241,7 +241,7 @@ export default async function LandingPage() {
         </section>
 
         {/* Features (bento) */}
-        <section className="grid gap-4 pb-20 md:grid-cols-2 lg:grid-cols-4" aria-label="Features">
+        <section className="grid grid-cols-1 gap-4 pb-16 sm:pb-20 md:grid-cols-2 lg:grid-cols-4" aria-label="Features">
           <div className="relative overflow-hidden rounded-xl border border-zinc-800 bg-zinc-900/40 p-6 transition-colors hover:border-zinc-700 md:col-span-2">
             <GitBranch className="mb-3 h-5 w-5 text-indigo-400" aria-hidden />
             <h3 className="mb-1 text-lg font-medium text-white">Proof of skill, not claims</h3>
@@ -268,10 +268,10 @@ export default async function LandingPage() {
             <p className="mb-5 max-w-md text-sm text-zinc-400">
               Every invite lives for 24 hours. No more waiting a week on someone who never answers.
             </p>
-            <div className="flex items-center gap-3 rounded-lg border border-zinc-800 bg-zinc-950/60 p-3">
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-2 rounded-lg border border-zinc-800 bg-zinc-950/60 p-3">
               <PulseDot tone="indigo" />
-              <span className="text-sm text-zinc-200">Invite to Team Nova</span>
-              <span className="ml-auto rounded-md border border-amber-500/30 bg-amber-500/10 px-2 py-0.5 font-mono text-xs text-amber-300">
+              <span className="min-w-0 text-sm text-zinc-200">Invite to Team Nova</span>
+              <span className="ml-auto whitespace-nowrap rounded-md border border-amber-500/30 bg-amber-500/10 px-2 py-0.5 font-mono text-xs text-amber-300">
                 23h 41m left
               </span>
             </div>
@@ -283,15 +283,15 @@ export default async function LandingPage() {
               className="rounded-xl border border-zinc-800 bg-zinc-900/40 p-5 transition-colors hover:border-zinc-700"
             >
               <Icon className="mb-3 h-5 w-5 text-indigo-400" aria-hidden />
-              <h3 className="mb-1 font-medium text-white">{title}</h3>
+              <h3 className="mb-1 pr-8 font-medium text-white">{title}</h3>
               <p className="text-sm text-zinc-400">{body}</p>
             </div>
           ))}
         </section>
 
         {/* Closing CTA */}
-        <section className="pb-24">
-          <div className="relative overflow-hidden rounded-2xl border border-indigo-500/30 bg-gradient-to-br from-indigo-600/20 via-zinc-900/60 to-cyan-500/10 px-6 py-12 text-center sm:px-12">
+        <section className="pb-16 sm:pb-24">
+          <div className="relative overflow-hidden rounded-2xl border border-indigo-500/30 bg-gradient-to-br from-indigo-600/20 via-zinc-900/60 to-cyan-500/10 px-5 py-10 text-center sm:px-12 sm:py-12">
             <div className="pointer-events-none absolute left-1/2 top-0 h-40 w-96 -translate-x-1/2 rounded-full bg-indigo-500/25 blur-3xl" />
             <div className="relative flex flex-col items-center gap-4">
               <h2 className="text-balance text-2xl font-semibold tracking-tight text-white sm:text-4xl">
