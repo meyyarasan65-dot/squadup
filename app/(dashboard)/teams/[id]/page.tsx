@@ -1,7 +1,20 @@
-import { ArrowLeft, CalendarDays, Clock, Crown, Lock, ShieldCheck, Sparkles, Users } from "lucide-react";
+import {
+  ArrowLeft,
+  CalendarDays,
+  Clock,
+  Crown,
+  Flame,
+  Lock,
+  Moon,
+  ShieldCheck,
+  Sparkles,
+  Sun,
+  Users,
+} from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
+import { EmergencyRadarModal } from "@/components/matchmaker/EmergencyRadarModal";
 import { GithubIcon, MatchScoreRing, PulseDot, RoleBadge } from "@/components/shared/badges";
 import { SkillBars } from "@/components/shared/SkillBars";
 import { EditTeamDialog } from "@/components/teams/EditTeamDialog";
@@ -11,6 +24,9 @@ import { RemoveMemberButton } from "@/components/teams/RemoveMemberButton";
 import { TeamCelebration } from "@/components/teams/TeamCelebration";
 import { TeamInviteManager } from "@/components/teams/TeamInviteManager";
 import { TeamMembershipAction } from "@/components/teams/TeamMembershipAction";
+import { SprintCanvas } from "@/components/workspace/SprintCanvas";
+import { StrategyCoPilot } from "@/components/workspace/StrategyCoPilot";
+import { WorkspaceBootstrapper } from "@/components/workspace/WorkspaceBootstrapper";
 import { UserAvatar } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -128,12 +144,17 @@ export default async function TeamPage({ params }: TeamPageProps) {
           <div className="flex shrink-0 flex-wrap items-center gap-2">
             {isLeader ? (
               <>
+                <WorkspaceBootstrapper team={team} isLeader={true} />
+                <EmergencyRadarModal team={team} />
                 <EditTeamDialog team={team} />
                 <DeleteTeamDialog team={team} />
                 <LeaveTeamButton team={team} isLeader={true} />
               </>
             ) : isMember ? (
-              <LeaveTeamButton team={team} isLeader={false} />
+              <>
+                <WorkspaceBootstrapper team={team} isLeader={false} />
+                <LeaveTeamButton team={team} isLeader={false} />
+              </>
             ) : (
               <div className="flex items-center gap-3">
                 {viewerMatch && (
@@ -311,6 +332,50 @@ export default async function TeamPage({ params }: TeamPageProps) {
                   <p className="line-clamp-2 text-xs text-zinc-400">{profile.bio}</p>
                 )}
 
+                {/* Hacker DNA Signals */}
+                <div className="flex flex-wrap items-center gap-1.5 text-[10px]">
+                  <span
+                    className="inline-flex items-center gap-1 rounded bg-emerald-500/10 px-1.5 py-0.5 font-mono font-medium text-emerald-300 border border-emerald-500/20"
+                    title="Commit Authenticity: Non-forked repository ratio"
+                  >
+                    <ShieldCheck className="h-3 w-3 text-emerald-400" />
+                    {(profile.commit_authenticity_score ?? 100).toFixed(0)}% Authenticity
+                  </span>
+
+                  <span
+                    className={`inline-flex items-center gap-1 rounded px-1.5 py-0.5 font-medium ${
+                      profile.hacker_pace === "all_nighter"
+                        ? "bg-indigo-500/10 text-indigo-300 border border-indigo-500/20"
+                        : "bg-amber-500/10 text-amber-300 border border-amber-500/20"
+                    }`}
+                  >
+                    {profile.hacker_pace === "all_nighter" ? (
+                      <Moon className="h-3 w-3 text-indigo-400" />
+                    ) : (
+                      <Sun className="h-3 w-3 text-amber-400" />
+                    )}
+                    {profile.hacker_pace === "all_nighter" ? "All-Nighter" : "Structured Day"}
+                  </span>
+
+                  {profile.leetcode_stats?.totalSolved && profile.leetcode_stats.totalSolved > 0 ? (
+                    <span className="inline-flex items-center gap-1 rounded bg-amber-500/10 px-1.5 py-0.5 text-amber-300 border border-amber-500/20 font-mono">
+                      <Flame className="h-3 w-3 text-amber-400" />
+                      LC: {profile.leetcode_stats.totalSolved}
+                    </span>
+                  ) : null}
+
+                  {profile.verified_tech_stack && profile.verified_tech_stack.length > 0 && (
+                    profile.verified_tech_stack.slice(0, 3).map((fw) => (
+                      <span
+                        key={fw.name}
+                        className="rounded bg-cyan-950/40 px-1.5 py-0.5 text-cyan-300 border border-cyan-800/40 font-mono"
+                      >
+                        {fw.name}
+                      </span>
+                    ))
+                  )}
+                </div>
+
                 {/* Verified Skills */}
                 <div className="mt-auto border-t border-zinc-800/60 pt-3">
                   <div className="mb-1.5 flex items-center justify-between text-[11px] text-zinc-500">
@@ -349,17 +414,51 @@ export default async function TeamPage({ params }: TeamPageProps) {
                 {vacancies[idx] ? `Looking for ${vacancies[idx]}` : "Awaiting applicant or invitation"}
               </p>
               {isLeader && (
-                <Button asChild size="sm" variant="ghost" className="mt-1 text-xs text-indigo-400 hover:text-indigo-300">
-                  <Link href={`/matchmaker?event=${team.event_id}`}>
-                    <Sparkles className="mr-1 h-3.5 w-3.5" />
-                    Find candidate
-                  </Link>
-                </Button>
+                <div className="mt-1 flex flex-wrap items-center justify-center gap-1.5">
+                  <EmergencyRadarModal
+                    team={team}
+                    defaultRole={vacancies[idx]}
+                    trigger={
+                      <Button size="sm" variant="ghost" className="h-7 text-[11px] text-cyan-400 hover:text-cyan-300">
+                        <Sparkles className="mr-1 h-3 w-3" />
+                        Radar Scan
+                      </Button>
+                    }
+                  />
+                  <Button asChild size="sm" variant="ghost" className="h-7 text-[11px] text-zinc-400 hover:text-zinc-200">
+                    <Link href={`/matchmaker?event=${team.event_id}`}>
+                      Browse
+                    </Link>
+                  </Button>
+                </div>
               )}
             </div>
           ))}
         </div>
       </section>
+
+      {/* Sponsor Track & Rubric Strategy Co-Pilot */}
+      <StrategyCoPilot team={team} isLeader={isLeader} />
+
+      {/* Real-Time Sprint Canvas for Members */}
+      {isMember && (
+        <section className="flex flex-col gap-3 border-t border-zinc-800/80 pt-8">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-lg font-semibold text-white">Squad Sprint Canvas</h2>
+              <p className="text-xs text-zinc-400">
+                Synchronized Markdown scratchpad and architecture plan powered by Supabase Realtime Broadcast.
+              </p>
+            </div>
+          </div>
+          <SprintCanvas
+            teamId={team.id}
+            initialContent={team.sprint_notes}
+            currentUserId={me.id}
+            isMember={isMember}
+          />
+        </section>
+      )}
 
       {/* Leader's Invite Management Section */}
       {isLeader && (

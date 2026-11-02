@@ -1,6 +1,5 @@
 import { useId } from "react";
 import { ROLE_LABELS, ROLE_STYLES } from "@/lib/constants";
-import { MATCH_WEIGHTS } from "@/lib/match-algorithm";
 import { cn } from "@/lib/utils";
 import type { MatchResult, Role } from "@/types";
 
@@ -60,9 +59,10 @@ export function scoreTier(score: number): string {
 }
 
 const BREAKDOWN_ROWS = [
-  { key: "role", label: "Role fit", max: Math.round(MATCH_WEIGHTS.role * 100) },
-  { key: "language", label: "GitHub language overlap", max: Math.round(MATCH_WEIGHTS.language * 100) },
-  { key: "event", label: "Event registration", max: Math.round(MATCH_WEIGHTS.event * 100) },
+  { key: "role", label: "Role target fit", max: 35 },
+  { key: "stack", label: "Verified stack overlap", max: 30 },
+  { key: "pace", label: "Hacker velocity pace", max: 15 },
+  { key: "auth", label: "Commit authenticity", max: 20 },
 ] as const;
 
 function ScoreBreakdown({ id, score, breakdown }: { id: string; score: number; breakdown: MatchResult["breakdown"] }) {
@@ -71,17 +71,17 @@ function ScoreBreakdown({ id, score, breakdown }: { id: string; score: number; b
       id={id}
       role="tooltip"
       className={cn(
-        "pointer-events-none invisible absolute right-0 top-full z-30 mt-2 w-60 rounded-xl border border-white/[0.1] bg-zinc-900 p-3 text-left opacity-0 shadow-xl transition duration-150",
+        "pointer-events-none invisible absolute right-0 top-full z-30 mt-2 w-64 rounded-xl border border-white/[0.1] bg-zinc-900 p-3 text-left opacity-0 shadow-xl transition duration-150",
         "group-hover/score:visible group-hover/score:opacity-100 group-focus-within/score:visible group-focus-within/score:opacity-100",
       )}
     >
       <p className="mb-2 flex items-center justify-between text-[11px] font-medium uppercase tracking-wider text-zinc-400">
-        Match breakdown
+        Constraint Match
         <span className="font-mono normal-case text-zinc-200">{score}/100</span>
       </p>
       <ul className="flex flex-col gap-2">
         {BREAKDOWN_ROWS.map(({ key, label, max }) => {
-          const value = breakdown[key];
+          const value = breakdown[key as keyof typeof breakdown] ?? 0;
           return (
             <li key={key} className="flex flex-col gap-1">
               <div className="flex items-center justify-between text-xs">

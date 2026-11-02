@@ -1,5 +1,6 @@
 import "server-only";
 import { z } from "zod";
+import { auditHackerDNA, type HackerDnaAuditResult } from "@/lib/dna-auditor";
 import type { GithubStats, TopRepo, VerifiedSkills } from "@/types";
 
 const GITHUB_API = "https://api.github.com";
@@ -100,6 +101,7 @@ export interface GithubSkillsResult {
   avatarUrl: string | null;
   verifiedSkills: VerifiedSkills;
   stats: Omit<GithubStats, "synced_at" | "source">;
+  dnaAudit: HackerDnaAuditResult;
 }
 
 /** Sums byte counts across repos and returns the top languages as percentages. */
@@ -172,25 +174,36 @@ export async function fetchAndAggregateGithubSkills(
   const analyzed = repos.filter((r) => !r.fork && !r.private).slice(0, REPOS_TO_ANALYZE);
 
   let partial = false;
-  const perRepo = await Promise.all(
-    analyzed.map(async (repo) => {
-      try {
-        return await githubGet(repo.languages_url, authToken, languagesSchema);
-      } catch (err) {
-        if (err instanceof GithubAuthError) throw err;
-        partial = true;
-        return approximateLanguages(repo);
-      }
-    }),
-  );
-
-  const totalCommits = await githubGet(
-    `${GITHUB_API}/search/commits?q=${encodeURIComponent(`author:${user.login}`)}&per_page=1`,
-    authToken,
-    commitSearchSchema,
-  )
-    .then((r) => r.total_count)
-    .catch(() => null);
+  const [perRepo, totalCommits, dnaAudit] = await Promise.all([
+    Promise.all(
+      analyzed.map(async (repo) => {
+        try {
+          return await githubGet(repo.languages_url, authToken, languagesSchema);
+        } catch (err) {
+          if (err instanceof GithubAuthError) throw err;
+          partial = true;
+          return approximateLanguages(repo);
+        }
+      }),
+    ),
+    githubGet(
+      `${GITHUB_API}/search/commits?q=${encodeURIComponent(`author:${user.login}`)}&per_page=1`,
+      authToken,
+      commitSearchSchema,
+    )
+      .then((r) => r.total_count)
+      .catch(() => null),
+    auditHackerDNA({
+      username: user.login,
+      repos,
+      token: authToken,
+    }).catch(() => ({
+      rawDependencies: [] as string[],
+      verifiedTechStack: [],
+      commitAuthenticityScore: 100.0,
+      leetcodeStats: { ranking: null, totalSolved: 0, easySolved: 0, mediumSolved: 0, hardSolved: 0 },
+    })),
+  ]);
 
   const topRepos: TopRepo[] = [...analyzed]
     .sort((a, b) => b.stargazers_count - a.stargazers_count)
@@ -215,5 +228,6 @@ export async function fetchAndAggregateGithubSkills(
       top_repos: topRepos,
       partial,
     },
+    dnaAudit,
   };
 }

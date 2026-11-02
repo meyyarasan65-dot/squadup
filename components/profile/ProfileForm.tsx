@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Check, Sparkles } from "lucide-react";
+import { Check, Moon, Sparkles, Sun } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -37,6 +37,7 @@ export function ProfileForm({ profile }: ProfileFormProps) {
       bio: profile.bio ?? "",
       primary_role: profile.primary_role,
       is_looking_for_team: profile.is_looking_for_team,
+      hacker_pace: profile.hacker_pace ?? "all_nighter",
     },
   });
 
@@ -167,6 +168,54 @@ export function ProfileForm({ profile }: ProfileFormProps) {
           {...form.register("bio")}
         />
         <FieldError message={form.formState.errors.bio?.message} />
+      </div>
+
+      {/* Hacker Velocity Pace */}
+      <div className="flex flex-col gap-2">
+        <Label>Hacker Velocity Pace</Label>
+        <Controller
+          control={form.control}
+          name="hacker_pace"
+          render={({ field }) => (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <button
+                type="button"
+                onClick={() => field.onChange("all_nighter")}
+                className={`flex items-center gap-2.5 rounded-xl border p-3 text-left transition-all ${
+                  field.value === "all_nighter"
+                    ? "border-indigo-500 bg-indigo-500/10 text-white shadow-sm shadow-indigo-950"
+                    : "border-zinc-800 bg-zinc-950/40 text-zinc-400 hover:border-zinc-700"
+                }`}
+              >
+                <div className="rounded-lg bg-indigo-500/20 p-2 text-indigo-400">
+                  <Moon className="h-4 w-4" />
+                </div>
+                <div>
+                  <div className="font-semibold text-xs text-white">All-Nighter Sprint</div>
+                  <div className="text-[11px] text-zinc-400">Continuous 36h velocity</div>
+                </div>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => field.onChange("structured_day")}
+                className={`flex items-center gap-2.5 rounded-xl border p-3 text-left transition-all ${
+                  field.value === "structured_day"
+                    ? "border-amber-500 bg-amber-500/10 text-white shadow-sm shadow-amber-950"
+                    : "border-zinc-800 bg-zinc-950/40 text-zinc-400 hover:border-zinc-700"
+                }`}
+              >
+                <div className="rounded-lg bg-amber-500/20 p-2 text-amber-400">
+                  <Sun className="h-4 w-4" />
+                </div>
+                <div>
+                  <div className="font-semibold text-xs text-white">Structured Day</div>
+                  <div className="text-[11px] text-zinc-400">Paced blocks, synchronized sleep</div>
+                </div>
+              </button>
+            </div>
+          )}
+        />
       </div>
 
       {/* Availability Toggle */}

@@ -1,21 +1,41 @@
 "use client";
 
-import { AlertCircle, ExternalLink, GitCommitHorizontal, GitFork, Star, Users } from "lucide-react";
+import {
+  AlertCircle,
+  Cpu,
+  ExternalLink,
+  Flame,
+  GitCommitHorizontal,
+  GitFork,
+  ShieldCheck,
+  Star,
+  Users,
+} from "lucide-react";
 import { GithubIcon } from "@/components/shared/badges";
 import { SkillBars } from "@/components/shared/SkillBars";
 import { Badge } from "@/components/ui/badge";
 import { languageColor } from "@/lib/constants";
 import { formatCompact, formatRelative } from "@/lib/utils";
-import type { GithubStats, VerifiedSkills } from "@/types";
+import type { GithubStats, LeetCodeStats, VerifiedFramework, VerifiedSkills } from "@/types";
 import { SyncGithubButton } from "./SyncGithubButton";
 
 interface GithubStatsPanelProps {
   stats: GithubStats;
   skills: VerifiedSkills;
   githubUsername: string;
+  authenticityScore?: number;
+  verifiedTechStack?: VerifiedFramework[];
+  leetcodeStats?: LeetCodeStats;
 }
 
-export function GithubStatsPanel({ stats, skills, githubUsername }: GithubStatsPanelProps) {
+export function GithubStatsPanel({
+  stats,
+  skills,
+  githubUsername,
+  authenticityScore = 100,
+  verifiedTechStack = [],
+  leetcodeStats,
+}: GithubStatsPanelProps) {
   const isDemo = stats.source === "seed";
 
   return (
@@ -116,6 +136,59 @@ export function GithubStatsPanel({ stats, skills, githubUsername }: GithubStatsP
           <span className="text-[11px] text-zinc-500">Byte breakdown across repos</span>
         </div>
         <SkillBars skills={skills} limit={6} />
+      </div>
+
+      {/* Autonomous Hacker DNA & Dependency Auditor */}
+      <div className="flex flex-col gap-3 rounded-xl border border-cyan-900/40 bg-zinc-950/60 p-4 sm:p-5">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <ShieldCheck className="h-4 w-4 text-emerald-400" />
+            <h3 className="text-sm font-semibold text-white">Autonomous Hacker DNA</h3>
+          </div>
+          <span className="font-mono text-xs font-semibold text-emerald-300">
+            {authenticityScore.toFixed(0)}% Authenticity
+          </span>
+        </div>
+
+        {/* LeetCode stats */}
+        {leetcodeStats?.totalSolved && leetcodeStats.totalSolved > 0 ? (
+          <div className="flex items-center justify-between rounded-lg border border-amber-500/20 bg-amber-500/5 px-3 py-2 text-xs">
+            <span className="flex items-center gap-1.5 text-amber-300">
+              <Flame className="h-3.5 w-3.5 text-amber-400" />
+              LeetCode Competitive Stats
+            </span>
+            <span className="font-mono text-white">
+              {leetcodeStats.totalSolved} Solved
+              {leetcodeStats.ranking ? ` (Rank #${formatCompact(leetcodeStats.ranking)})` : ""}
+            </span>
+          </div>
+        ) : null}
+
+        {/* Manifest frameworks */}
+        <div className="flex flex-col gap-1.5 pt-1">
+          <span className="text-[11px] font-medium text-zinc-400 flex items-center gap-1">
+            <Cpu className="h-3 w-3 text-cyan-400" />
+            Audited Frameworks (package.json & requirements.txt)
+          </span>
+          {verifiedTechStack.length > 0 ? (
+            <div className="flex flex-wrap gap-1.5">
+              {verifiedTechStack.map((fw) => (
+                <span
+                  key={fw.name}
+                  className="inline-flex items-center gap-1 rounded bg-cyan-950/40 px-2 py-0.5 text-xs text-cyan-300 border border-cyan-800/40 font-mono"
+                  title={`${fw.category} (weight: ${fw.weight})`}
+                >
+                  {fw.name}
+                  <span className="text-[10px] text-zinc-500">· {fw.category}</span>
+                </span>
+              ))}
+            </div>
+          ) : (
+            <span className="text-xs text-zinc-500">
+              Auditor scans active non-forked repos during sync.
+            </span>
+          )}
+        </div>
       </div>
 
       {/* Top Repositories */}

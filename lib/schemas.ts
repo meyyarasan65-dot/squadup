@@ -54,6 +54,56 @@ export const githubStatsSchema = z
   });
 
 export const roleSchema = z.enum(ROLES);
+export const hackerPaceSchema = z.enum(["all_nighter", "structured_day"]).catch("all_nighter");
+
+export const verifiedFrameworkSchema = z.object({
+  name: z.string(),
+  category: z.enum([
+    "Database/ORM",
+    "Realtime Systems",
+    "AI / ML",
+    "Modern Frontend",
+    "Cloud & DevOps",
+    "Other",
+  ]),
+  weight: z.number(),
+});
+
+export const leetCodeStatsSchema = z
+  .object({
+    ranking: z.number().nullable().optional(),
+    totalSolved: z.number().int().optional(),
+    easySolved: z.number().int().optional(),
+    mediumSolved: z.number().int().optional(),
+    hardSolved: z.number().int().optional(),
+  })
+  .catch({});
+
+export const sponsorTrackSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  description: z.string(),
+  prize: z.string().optional(),
+});
+
+export const projectPitchSchema = z.object({
+  ideas: z.array(
+    z.object({
+      title: z.string(),
+      elevatorPitch: z.string(),
+      sponsorAlignment: z.string(),
+      technicalArchitecture: z.string(),
+      roleAssignments: z.record(z.string(), z.string()),
+      noveltyScore: z.number().min(1).max(10),
+    }),
+  ).length(3),
+});
+
+export const radarQuerySchema = z.object({
+  event_id: z.string().uuid().optional(),
+  missing_role: roleSchema.optional(),
+  radius_minutes: z.coerce.number().int().positive().default(120),
+});
 
 // ----------------------------------------------------------------------------
 // Server Action inputs
@@ -80,6 +130,7 @@ export const profileFormSchema = z.object({
   bio: z.string().trim().max(280, "Keep it under 280 characters"),
   primary_role: roleSchema,
   is_looking_for_team: z.boolean(),
+  hacker_pace: hackerPaceSchema.optional().default("all_nighter"),
 });
 export type ProfileFormValues = z.infer<typeof profileFormSchema>;
 
@@ -92,6 +143,9 @@ export const teamFormSchema = z.object({
   pitch: z.string().trim().min(10, "Give people a one-line pitch").max(400),
   target_roles: z.array(roleSchema).min(1, "Pick at least one open role").max(7),
   tech_stack: z.array(languageName).max(15),
+  hacker_pace: hackerPaceSchema.optional().default("all_nighter"),
+  discord_webhook_url: z.string().trim().url().optional().or(z.literal("")),
+  selected_tracks: z.array(z.string()).optional().default([]),
 });
 export type TeamFormValues = z.infer<typeof teamFormSchema>;
 

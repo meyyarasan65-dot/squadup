@@ -1,7 +1,18 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Check, ExternalLink, FolderGit2, GitCommit, Send, Star } from "lucide-react";
+import {
+  Check,
+  ExternalLink,
+  Flame,
+  FolderGit2,
+  GitCommit,
+  Moon,
+  Send,
+  ShieldCheck,
+  Star,
+  Sun,
+} from "lucide-react";
 import Link from "next/link";
 import { GithubIcon, MatchScoreRing, MatchTag, RoleBadge } from "@/components/shared/badges";
 import { LanguageBar } from "@/components/shared/SkillBars";
@@ -87,6 +98,50 @@ export function CandidateCard({
       {candidate.bio && <p className="line-clamp-2 text-sm text-zinc-400">{candidate.bio}</p>}
 
       <LanguageBar skills={candidate.verified_skills} highlight={highlightLanguages} limit={4} />
+
+      {/* Autonomous Hacker DNA Signals */}
+      <div className="flex flex-wrap items-center gap-1.5 text-[10px]">
+        <span
+          className="inline-flex items-center gap-1 rounded bg-emerald-500/10 px-1.5 py-0.5 font-mono font-medium text-emerald-300 border border-emerald-500/20"
+          title="Commit Authenticity: Non-forked repository ratio"
+        >
+          <ShieldCheck className="h-3 w-3 text-emerald-400" />
+          {(candidate.commit_authenticity_score ?? 100).toFixed(0)}% Authenticity
+        </span>
+
+        <span
+          className={`inline-flex items-center gap-1 rounded px-1.5 py-0.5 font-medium ${
+            candidate.hacker_pace === "all_nighter"
+              ? "bg-indigo-500/10 text-indigo-300 border border-indigo-500/20"
+              : "bg-amber-500/10 text-amber-300 border border-amber-500/20"
+          }`}
+        >
+          {candidate.hacker_pace === "all_nighter" ? (
+            <Moon className="h-3 w-3 text-indigo-400" />
+          ) : (
+            <Sun className="h-3 w-3 text-amber-400" />
+          )}
+          {candidate.hacker_pace === "all_nighter" ? "All-Nighter" : "Structured Day"}
+        </span>
+
+        {candidate.leetcode_stats?.totalSolved && candidate.leetcode_stats.totalSolved > 0 ? (
+          <span className="inline-flex items-center gap-1 rounded bg-amber-500/10 px-1.5 py-0.5 text-amber-300 border border-amber-500/20 font-mono">
+            <Flame className="h-3 w-3 text-amber-400" />
+            LC: {candidate.leetcode_stats.totalSolved}
+          </span>
+        ) : null}
+
+        {candidate.verified_tech_stack && candidate.verified_tech_stack.length > 0 && (
+          candidate.verified_tech_stack.slice(0, 3).map((fw) => (
+            <span
+              key={fw.name}
+              className="rounded bg-zinc-800/80 px-1.5 py-0.5 text-cyan-300 border border-zinc-700/60 font-mono"
+            >
+              {fw.name}
+            </span>
+          ))
+        )}
+      </div>
 
       <footer className="mt-auto flex flex-wrap items-center justify-between gap-x-3 gap-y-2 border-t border-white/[0.06] pt-4">
         <div className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1 font-mono text-xs text-zinc-400">

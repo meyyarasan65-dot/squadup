@@ -1,39 +1,13 @@
-import { ROLE_LABELS, SKILL_THRESHOLD_PERCENT } from "@/lib/constants";
-import { isTeamOpen, openRoles } from "@/lib/mappers";
-import type { MatchResult, Profile, Role, TeamWithMembers } from "@/types";
+import { SKILL_THRESHOLD_PERCENT } from "@/lib/constants";
+import { isTeamOpen } from "@/lib/mappers";
+import { calculateConstraintMatchScore } from "@/lib/match-engine";
+import type { MatchResult, Profile, TeamWithMembers } from "@/types";
 
 /**
- * MatchScore = 0.45·RoleMatch + 0.35·LanguageOverlap + 0.20·EventRegistered
- * Each component is in [0, 1]; the score is reported on a 0–100 scale.
+ * Constraint Satisfaction Scoring Formula:
+ * FinalScore = (0.35 * S_role) + (0.30 * S_stack) + (0.15 * S_pace) + (0.20 * S_auth)
  */
-export const MATCH_WEIGHTS = { role: 0.45, language: 0.35, event: 0.2 } as const;
-
-/** Language share at which we call out a "High <lang> Overlap". */
-const HIGH_OVERLAP_PERCENT = 25;
-
-/** A team rarely needs every listed language covered by one person. */
-const LANGUAGES_FOR_FULL_OVERLAP = 3;
-
-/** Partial credit when a candidate's role can reasonably fill another slot. */
-const ADJACENT_ROLES: Partial<Record<Role, Partial<Record<Role, number>>>> = {
-  fullstack: { frontend: 0.6, backend: 0.6 },
-  frontend: { fullstack: 0.5, ui_ux: 0.3 },
-  backend: { fullstack: 0.5, devops: 0.3 },
-  ui_ux: { frontend: 0.3 },
-  devops: { backend: 0.3 },
-};
-
-function roleComponent(role: Role, wanted: Role[]): { value: number; reason: string | null } {
-  if (wanted.includes(role)) return { value: 1, reason: "Exact Role Match" };
-
-  let best: { value: number; slot: Role } | null = null;
-  for (const slot of wanted) {
-    const credit = ADJACENT_ROLES[role]?.[slot] ?? 0;
-    if (credit > (best?.value ?? 0)) best = { value: credit, slot };
-  }
-  if (best) return { value: best.value, reason: `Can cover ${ROLE_LABELS[best.slot]}` };
-  return { value: 0, reason: null };
-}
+export const MATCH_WEIGHTS = { role: 0.35, stack: 0.30, pace: 0.15, auth: 0.20 } as const;
 
 /** The team's desired languages, or what its members already write if none were listed. */
 export function desiredLanguages(team: TeamWithMembers, excludeUserId?: string): string[] {
@@ -46,25 +20,6 @@ export function desiredLanguages(team: TeamWithMembers, excludeUserId?: string):
     }
   }
   return [...fromMembers];
-}
-
-function languageComponent(
-  skills: Profile["verified_skills"],
-  desired: string[],
-): { value: number; reasons: string[] } {
-  if (desired.length === 0) return { value: 0, reasons: [] };
-
-  const lowerSkills = new Map(Object.entries(skills).map(([k, v]) => [k.toLowerCase(), { k, v }]));
-  const matched = desired
-    .map((lang) => lowerSkills.get(lang.toLowerCase()))
-    .filter((s): s is { k: string; v: number } => !!s && s.v >= SKILL_THRESHOLD_PERCENT)
-    .sort((a, b) => b.v - a.v);
-
-  const value = Math.min(1, matched.length / Math.min(desired.length, LANGUAGES_FOR_FULL_OVERLAP));
-  const reasons = matched
-    .slice(0, 2)
-    .map((s) => (s.v >= HIGH_OVERLAP_PERCENT ? `High ${s.k} Overlap` : `Writes ${s.k}`));
-  return { value, reasons };
 }
 
 export interface MatchOptions {
@@ -81,36 +36,26 @@ export function calculateMatchScore(
     return {
       score: 0,
       reasons: [team.is_locked ? "Team is locked" : "Team is full"],
-      breakdown: { role: 0, language: 0, event: 0 },
+      breakdown: { role: 0, stack: 0, pace: 0, auth: 0, event: 0 },
     };
   }
 
-  const wanted = openRoles(team);
-  const role = roleComponent(candidate.primary_role, wanted);
-  const language = languageComponent(
-    candidate.verified_skills,
-    desiredLanguages(team, candidate.id),
-  );
-  const event = options.isRegisteredForEvent ? 1 : 0;
+  const constraintResult = calculateConstraintMatchScore(candidate, team);
 
-  const raw =
-    MATCH_WEIGHTS.role * role.value +
-    MATCH_WEIGHTS.language * language.value +
-    MATCH_WEIGHTS.event * event;
-
-  const reasons = [
-    ...(role.reason ? [role.reason] : []),
-    ...language.reasons,
-    ...(event ? ["Registered for event"] : []),
-  ];
+  const reasons = [...constraintResult.reasons];
+  if (options.isRegisteredForEvent) {
+    reasons.push("Registered for event");
+  }
 
   return {
-    score: Math.round(raw * 100),
+    score: constraintResult.score,
     reasons,
     breakdown: {
-      role: Math.round(MATCH_WEIGHTS.role * role.value * 100),
-      language: Math.round(MATCH_WEIGHTS.language * language.value * 100),
-      event: Math.round(MATCH_WEIGHTS.event * event * 100),
+      role: Math.round(constraintResult.breakdown.role * MATCH_WEIGHTS.role),
+      stack: Math.round(constraintResult.breakdown.stack * MATCH_WEIGHTS.stack),
+      pace: Math.round(constraintResult.breakdown.pace * MATCH_WEIGHTS.pace),
+      auth: Math.round(constraintResult.breakdown.auth * MATCH_WEIGHTS.auth),
+      event: options.isRegisteredForEvent ? 10 : 0,
     },
   };
 }

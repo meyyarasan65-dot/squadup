@@ -31,6 +31,11 @@ export type Database = {
           onboarded: boolean;
           created_at: string | null;
           updated_at: string | null;
+          raw_dependencies: Json | null;
+          verified_tech_stack: Json | null;
+          commit_authenticity_score: number | null;
+          leetcode_stats: Json | null;
+          hacker_pace: string | null;
         };
         Insert: {
           id: string;
@@ -46,6 +51,11 @@ export type Database = {
           onboarded?: boolean;
           created_at?: string | null;
           updated_at?: string | null;
+          raw_dependencies?: Json | null;
+          verified_tech_stack?: Json | null;
+          commit_authenticity_score?: number | null;
+          leetcode_stats?: Json | null;
+          hacker_pace?: string | null;
         };
         Update: {
           id?: string;
@@ -61,6 +71,11 @@ export type Database = {
           onboarded?: boolean;
           created_at?: string | null;
           updated_at?: string | null;
+          raw_dependencies?: Json | null;
+          verified_tech_stack?: Json | null;
+          commit_authenticity_score?: number | null;
+          leetcode_stats?: Json | null;
+          hacker_pace?: string | null;
         };
         Relationships: [];
       };
@@ -77,6 +92,7 @@ export type Database = {
           team_min_size: number | null;
           team_max_size: number | null;
           created_at: string | null;
+          sponsor_tracks: Json | null;
         };
         Insert: {
           id?: string;
@@ -90,6 +106,7 @@ export type Database = {
           team_min_size?: number | null;
           team_max_size?: number | null;
           created_at?: string | null;
+          sponsor_tracks?: Json | null;
         };
         Update: {
           id?: string;
@@ -103,6 +120,7 @@ export type Database = {
           team_min_size?: number | null;
           team_max_size?: number | null;
           created_at?: string | null;
+          sponsor_tracks?: Json | null;
         };
         Relationships: [];
       };
@@ -117,6 +135,11 @@ export type Database = {
           tech_stack: string[];
           is_locked: boolean | null;
           created_at: string | null;
+          github_repo_url: string | null;
+          discord_webhook_url: string | null;
+          sprint_notes: string | null;
+          hacker_pace: string | null;
+          selected_tracks: Json | null;
         };
         Insert: {
           id?: string;
@@ -128,6 +151,11 @@ export type Database = {
           tech_stack?: string[];
           is_locked?: boolean | null;
           created_at?: string | null;
+          github_repo_url?: string | null;
+          discord_webhook_url?: string | null;
+          sprint_notes?: string | null;
+          hacker_pace?: string | null;
+          selected_tracks?: Json | null;
         };
         Update: {
           id?: string;
@@ -139,6 +167,11 @@ export type Database = {
           tech_stack?: string[];
           is_locked?: boolean | null;
           created_at?: string | null;
+          github_repo_url?: string | null;
+          discord_webhook_url?: string | null;
+          sprint_notes?: string | null;
+          hacker_pace?: string | null;
+          selected_tracks?: Json | null;
         };
         Relationships: [
           {

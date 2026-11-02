@@ -3,6 +3,7 @@ import { fetchAndAggregateGithubSkills, GithubRateLimitError } from "@/lib/githu
 import { createAdminClient } from "@/lib/supabase/server";
 import { errorMessage } from "@/lib/utils";
 import type { GithubStats, GithubSyncSource } from "@/types";
+import type { Json } from "@/types/database";
 
 export type SyncOutcome =
   | { ok: true; stats: GithubStats }
@@ -35,6 +36,10 @@ export async function syncGithubProfile(params: {
       .from("profiles")
       .update({
         verified_skills: result.verifiedSkills,
+        raw_dependencies: result.dnaAudit.rawDependencies,
+        verified_tech_stack: result.dnaAudit.verifiedTechStack as unknown as Json,
+        commit_authenticity_score: result.dnaAudit.commitAuthenticityScore,
+        leetcode_stats: result.dnaAudit.leetcodeStats as unknown as Json,
         ...(result.avatarUrl ? { avatar_url: result.avatarUrl } : {}),
         github_stats: stats,
       })

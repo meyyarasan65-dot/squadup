@@ -31,6 +31,7 @@ export async function updateProfileAction(values: ProfileFormValues): Promise<Ac
       bio: input.data.bio || null,
       primary_role: input.data.primary_role,
       is_looking_for_team: input.data.is_looking_for_team,
+      hacker_pace: input.data.hacker_pace ?? "all_nighter",
       onboarded: true,
     })
     .eq("id", session.userId);

@@ -5,6 +5,7 @@ import { SlidersHorizontal, Sparkles, Users, UserSearch } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useMemo, useRef } from "react";
 import { CandidateCard } from "@/components/matchmaker/CandidateCard";
+import { EmergencyRadarModal } from "@/components/matchmaker/EmergencyRadarModal";
 import { MatchmakerFilters } from "@/components/matchmaker/MatchmakerFilters";
 import { TeamCard } from "@/components/matchmaker/TeamCard";
 import { useInviteSender } from "@/components/matchmaker/useInviteSender";
@@ -163,20 +164,26 @@ export function MatchmakerView({
             Find teammates
           </SegmentedTabsTrigger>
         </SegmentedTabsList>
-        <Button
-          variant="outline"
-          className="lg:hidden"
-          onClick={() => store.setFiltersOpen(true)}
-          aria-label="Open filters"
-        >
-          <SlidersHorizontal />
-          Filters
-          {activeFilterCount > 0 && (
-            <span className="rounded-full bg-indigo-500 px-1.5 font-mono text-[11px] text-primary-foreground">
-              {activeFilterCount}
-            </span>
-          )}
-        </Button>
+        <div className="flex items-center gap-2">
+          <EmergencyRadarModal
+            team={selectedTeam ?? undefined}
+            eventId={selectedTeam?.event_id || store.eventId || undefined}
+          />
+          <Button
+            variant="outline"
+            className="lg:hidden"
+            onClick={() => store.setFiltersOpen(true)}
+            aria-label="Open filters"
+          >
+            <SlidersHorizontal />
+            Filters
+            {activeFilterCount > 0 && (
+              <span className="rounded-full bg-indigo-500 px-1.5 font-mono text-[11px] text-primary-foreground">
+                {activeFilterCount}
+              </span>
+            )}
+          </Button>
+        </div>
       </div>
 
       <div className="mt-6 grid gap-8 lg:grid-cols-[260px_1fr]">

@@ -43,6 +43,9 @@ export default async function ProfilePage({ searchParams }: ProfilePageProps) {
             stats={me.github_stats}
             skills={me.verified_skills}
             githubUsername={me.github_username}
+            authenticityScore={me.commit_authenticity_score}
+            verifiedTechStack={me.verified_tech_stack}
+            leetcodeStats={me.leetcode_stats}
           />
         </div>
       </div>

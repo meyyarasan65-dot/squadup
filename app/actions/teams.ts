@@ -199,3 +199,69 @@ export async function deleteTeamAction(teamId: string): Promise<ActionResult> {
   revalidatePath("/invites");
   return { ok: true, data: undefined };
 }
+
+export async function updateSprintNotesAction(
+  teamId: string,
+  notes: string,
+): Promise<ActionResult> {
+  const session = await authed();
+  if (!session) return UNAUTHENTICATED;
+
+  const admin = createAdminClient();
+  const { data: team } = await admin
+    .from("teams")
+    .select("leader_id")
+    .eq("id", teamId)
+    .maybeSingle();
+
+  if (!team) {
+    return { ok: false, error: "Team not found" };
+  }
+
+  const { data: member } = await admin
+    .from("team_members")
+    .select("id")
+    .eq("team_id", teamId)
+    .eq("user_id", session.userId)
+    .maybeSingle();
+
+  if (!member && team.leader_id !== session.userId) {
+    return { ok: false, error: "Only squad members can edit the sprint canvas" };
+  }
+
+  const { error } = await admin
+    .from("teams")
+    .update({ sprint_notes: notes })
+    .eq("id", teamId);
+
+  if (error) return { ok: false, error: error.message };
+  return { ok: true, data: undefined };
+}
+
+export async function updateTeamTracksAction(
+  teamId: string,
+  tracks: string[],
+): Promise<ActionResult> {
+  const session = await authed();
+  if (!session) return UNAUTHENTICATED;
+
+  const admin = createAdminClient();
+  const { data: team } = await admin
+    .from("teams")
+    .select("leader_id")
+    .eq("id", teamId)
+    .maybeSingle();
+
+  if (!team || team.leader_id !== session.userId) {
+    return { ok: false, error: "Only the squad leader can modify target sponsor tracks" };
+  }
+
+  const { error } = await admin
+    .from("teams")
+    .update({ selected_tracks: tracks })
+    .eq("id", teamId);
+
+  if (error) return { ok: false, error: error.message };
+  revalidatePath(`/teams/${teamId}`);
+  return { ok: true, data: undefined };
+}

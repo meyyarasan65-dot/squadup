@@ -42,6 +42,11 @@ function mockProfile(
     onboarded: true,
     created_at: null,
     updated_at: null,
+    raw_dependencies: [],
+    verified_tech_stack: [],
+    commit_authenticity_score: 95.0,
+    leetcode_stats: { totalSolved: 120, ranking: 45000 },
+    hacker_pace: "all_nighter",
   };
 }
 
@@ -67,6 +72,11 @@ function mockTeam(roles: Role[], stack: string[]): TeamWithMembers {
     tech_stack: stack,
     is_locked: false,
     created_at: null,
+    hacker_pace: "all_nighter",
+    selected_tracks: [],
+    github_repo_url: null,
+    discord_webhook_url: null,
+    sprint_notes: null,
     members: [],
     event: {
       id: "demo-event",
@@ -80,6 +90,7 @@ function mockTeam(roles: Role[], stack: string[]): TeamWithMembers {
       team_min_size: 2,
       team_max_size: 4,
       created_at: null,
+      sponsor_tracks: [],
     },
   };
 }
