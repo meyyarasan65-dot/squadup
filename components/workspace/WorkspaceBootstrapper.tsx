@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import {
   CheckCircle2,
   ExternalLink,
@@ -32,10 +32,20 @@ export function WorkspaceBootstrapper({ team, isLeader }: WorkspaceBootstrapperP
   const [discordWebhookUrl, setDiscordWebhookUrl] = useState(
     team.discord_webhook_url || "",
   );
+  const [githubToken, setGithubToken] = useState("");
   const [repoUrl, setRepoUrl] = useState<string | null>(team.github_repo_url || null);
   const [discordSent, setDiscordSent] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("squadup_github_pat");
+      if (saved) setGithubToken(saved);
+    } catch {
+      // Ignore localStorage issues
+    }
+  }, []);
 
   const handleBootstrap = () => {
     setError(null);
@@ -46,6 +56,7 @@ export function WorkspaceBootstrapper({ team, isLeader }: WorkspaceBootstrapperP
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             discord_webhook_url: discordWebhookUrl.trim() || undefined,
+            github_token: githubToken.trim() || undefined,
           }),
         });
 
@@ -156,6 +167,41 @@ export function WorkspaceBootstrapper({ team, isLeader }: WorkspaceBootstrapperP
           </div>
         ) : (
           <div className="flex flex-col gap-4 py-2">
+            <div className="flex flex-col gap-1.5">
+              <div className="flex items-center justify-between">
+                <label className="text-xs font-medium text-zinc-300 flex items-center gap-1.5">
+                  <Github className="h-3.5 w-3.5 text-cyan-400" />
+                  GitHub Personal Access Token (PAT)
+                </label>
+                <a
+                  href="https://github.com/settings/tokens/new?scopes=repo&description=SquadUp+Workspace+Bootstrapper"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-[10px] text-cyan-400 hover:underline flex items-center gap-0.5"
+                >
+                  Create token (repo scope)
+                  <ExternalLink className="h-2.5 w-2.5" />
+                </a>
+              </div>
+              <Input
+                type="password"
+                placeholder="ghp_xxxxxxxxxxxxxxxxxxxx"
+                value={githubToken}
+                onChange={(e) => {
+                  setGithubToken(e.target.value);
+                  try {
+                    localStorage.setItem("squadup_github_pat", e.target.value);
+                  } catch {
+                    // Ignore storage issues
+                  }
+                }}
+                className="bg-zinc-900 border-zinc-800 text-xs font-mono"
+              />
+              <p className="text-[11px] text-zinc-500">
+                Required to create the repo & invite collaborators. (Or set <code className="text-cyan-400">GITHUB_TOKEN</code> in your environment variables).
+              </p>
+            </div>
+
             <div className="flex flex-col gap-1.5">
               <label className="text-xs font-medium text-zinc-300 flex items-center gap-1.5">
                 <MessageSquare className="h-3.5 w-3.5 text-indigo-400" />

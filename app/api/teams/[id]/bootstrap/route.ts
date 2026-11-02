@@ -40,12 +40,16 @@ export async function POST(
     );
   }
 
-  // Parse optional webhook URL override from body
+  // Parse optional webhook URL override and user-supplied GitHub PAT from body
   let discordWebhookUrl = team.discord_webhook_url;
+  let userProvidedToken: string | null = null;
   try {
     const body = await request.json();
     if (body?.discord_webhook_url) {
       discordWebhookUrl = body.discord_webhook_url.trim();
+    }
+    if (body?.github_token) {
+      userProvidedToken = body.github_token.trim();
     }
   } catch {
     // Body is optional
@@ -55,13 +59,15 @@ export async function POST(
     data: { session },
   } = await supabase.auth.getSession();
 
-  const githubToken = session?.provider_token || process.env.GITHUB_TOKEN || null;
+  const githubToken =
+    userProvidedToken || session?.provider_token || process.env.GITHUB_TOKEN || null;
 
   if (!githubToken) {
     return NextResponse.json(
       {
         ok: false,
-        error: "GitHub token unavailable. Please sign in with GitHub or configure GITHUB_TOKEN.",
+        error:
+          "GitHub token unavailable. Please enter a GitHub Personal Access Token (with repo scope) or configure GITHUB_TOKEN.",
       },
       { status: 400 },
     );
