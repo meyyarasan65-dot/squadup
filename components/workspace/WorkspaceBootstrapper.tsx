@@ -82,7 +82,7 @@ export function WorkspaceBootstrapper({ team, isLeader }: WorkspaceBootstrapperP
               asChild
               size="sm"
               variant="outline"
-              className="border-cyan-500/30 bg-cyan-950/20 text-cyan-300 hover:bg-cyan-900/30 hover:text-white"
+              className="border-cyan-600/40 text-cyan-700 hover:bg-cyan-50 dark:border-cyan-500/40 dark:bg-cyan-950/30 dark:text-cyan-300 dark:hover:bg-cyan-900/40 dark:hover:text-white"
             >
               <a href={repoUrl} target="_blank" rel="noreferrer">
                 <Github className="mr-1.5 h-3.5 w-3.5" />
@@ -103,10 +103,10 @@ export function WorkspaceBootstrapper({ team, isLeader }: WorkspaceBootstrapperP
         ) : isLeader ? (
           <Button
             size="sm"
-            className="group border border-cyan-500/40 bg-gradient-to-r from-cyan-900/80 via-zinc-900 to-cyan-950/80 text-cyan-300 hover:border-cyan-400 hover:text-white shadow-lg shadow-cyan-950/30"
+            className="group bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-medium shadow-md shadow-cyan-600/20 active:scale-[0.98] border border-cyan-500/40 transition-all"
           >
-            <Rocket className="mr-1.5 h-3.5 w-3.5 text-cyan-400 transition-transform group-hover:-translate-y-0.5" />
-            Bootstrap Workspace
+            <Rocket className="mr-1.5 h-3.5 w-3.5 text-white transition-transform group-hover:-translate-y-0.5" />
+            <span className="font-semibold text-white">Bootstrap Workspace</span>
           </Button>
         ) : null}
       </DialogTrigger>

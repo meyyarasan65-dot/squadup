@@ -170,11 +170,11 @@ export function StrategyCoPilot({ team, isLeader, onApplyPitch }: StrategyCoPilo
                 onClick={() => toggleTrack(track)}
                 className={`inline-flex items-center gap-1 rounded-lg px-2.5 py-1 text-xs font-medium transition-all ${
                   isSelected
-                    ? "border border-cyan-500/50 bg-cyan-950/40 text-cyan-300 shadow-sm shadow-cyan-900/30"
-                    : "border border-zinc-800 bg-zinc-900/70 text-zinc-400 hover:border-zinc-700 hover:text-zinc-200"
+                    ? "border border-cyan-500 bg-cyan-50 text-cyan-800 shadow-sm dark:border-cyan-500/50 dark:bg-cyan-950/40 dark:text-cyan-300"
+                    : "border border-border bg-muted/60 text-muted-foreground hover:bg-accent hover:text-foreground dark:border-zinc-800 dark:bg-zinc-900/70 dark:text-zinc-400 dark:hover:border-zinc-700 dark:hover:text-zinc-200"
                 }`}
               >
-                {isSelected && <Check className="h-3 w-3 text-cyan-400" />}
+                {isSelected && <Check className="h-3 w-3 text-cyan-600 dark:text-cyan-400" />}
                 {track}
               </button>
             );

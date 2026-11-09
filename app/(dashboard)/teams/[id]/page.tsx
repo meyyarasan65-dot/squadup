@@ -419,7 +419,7 @@ export default async function TeamPage({ params }: TeamPageProps) {
                     team={team}
                     defaultRole={vacancies[idx]}
                     trigger={
-                      <Button size="sm" variant="ghost" className="h-7 text-[11px] text-cyan-400 hover:text-cyan-300">
+                      <Button size="sm" variant="ghost" className="h-7 text-[11px] text-cyan-600 hover:text-cyan-700 dark:text-cyan-400 dark:hover:text-cyan-300">
                         <Sparkles className="mr-1 h-3 w-3" />
                         Radar Scan
                       </Button>

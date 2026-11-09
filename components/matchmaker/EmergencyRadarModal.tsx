@@ -106,15 +106,15 @@ export function EmergencyRadarModal({
         ) : (
           <Button
             size="sm"
-            className="group relative overflow-hidden border border-cyan-500/40 bg-gradient-to-r from-cyan-950/60 via-zinc-900 to-cyan-950/40 text-cyan-300 shadow-lg shadow-cyan-950/20 hover:border-cyan-400 hover:text-white"
+            className="group relative overflow-hidden bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-medium shadow-md shadow-indigo-600/20 active:scale-[0.98] border border-indigo-500/40 transition-all"
           >
             <span className="relative flex items-center gap-2">
               <span className="relative flex h-2 w-2">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-cyan-400 opacity-75" />
-                <span className="relative inline-flex h-2 w-2 rounded-full bg-cyan-500" />
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-white opacity-75" />
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-white" />
               </span>
-              <Radio className="h-3.5 w-3.5 text-cyan-400 transition-transform group-hover:scale-110" />
-              <span className="font-semibold tracking-wide">Emergency Radar</span>
+              <Radio className="h-3.5 w-3.5 text-white transition-transform group-hover:scale-110" />
+              <span className="font-semibold tracking-wide text-white">Emergency Radar</span>
             </span>
           </Button>
         )}
